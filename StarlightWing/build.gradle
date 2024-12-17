@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'war'
 	id 'org.springframework.boot' version '3.4.0'
-	id 'io.spring.dependency-management' version '1.1.6'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 group = 'com.minjoo'
@@ -26,10 +26,15 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
+
 	runtimeOnly 'com.h2database:h2'
+//	implementation group: 'com.h2database', name: 'h2', version: '1.4.200' //h2인메모리 데이터베이스를 사용하기 위해 이 줄을 작성.
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'//스크래핑을 하기 위해 jsoup라이브러리도 추가를 해줌.
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+
 	annotationProcessor 'org.projectlombok:lombok'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

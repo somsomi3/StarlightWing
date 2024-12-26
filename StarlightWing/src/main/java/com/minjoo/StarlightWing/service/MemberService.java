@@ -1,7 +1,5 @@
 package com.minjoo.StarlightWing.service;
 
-import com.minjoo.StarlightWing.model.Auth;
-import com.minjoo.StarlightWing.model.MemberEntity;
 import com.minjoo.StarlightWing.persist.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

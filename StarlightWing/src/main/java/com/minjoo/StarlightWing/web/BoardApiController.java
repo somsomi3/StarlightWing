@@ -2,7 +2,6 @@ package com.minjoo.StarlightWing.web;
 
 import com.minjoo.StarlightWing.dto.ResponseDto;
 import com.minjoo.StarlightWing.model.Board;
-import com.minjoo.StarlightWing.model.MemberEntity;
 import com.minjoo.StarlightWing.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

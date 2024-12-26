@@ -1,7 +1,6 @@
 package com.minjoo.StarlightWing.service;
 
 import com.minjoo.StarlightWing.model.Board;
-import com.minjoo.StarlightWing.model.MemberEntity;
 import com.minjoo.StarlightWing.persist.BoardRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

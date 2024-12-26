@@ -1,6 +1,5 @@
 package com.minjoo.StarlightWing.web;
 
-import com.minjoo.StarlightWing.model.Auth;
 import com.minjoo.StarlightWing.security.TokenProvider;
 import com.minjoo.StarlightWing.service.MemberService;
 import lombok.RequiredArgsConstructor;

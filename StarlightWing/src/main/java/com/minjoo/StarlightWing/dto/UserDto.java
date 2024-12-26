@@ -1,43 +1,65 @@
-package com.minjoo.StarlightWing.model;
+package com.minjoo.StarlightWing.dto;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
 @Builder
 @Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "MEMBER")
-public class MemberEntity implements UserDetails {
-    //spring security에  있는 것을 사용해 주기 위해서 implement UserDetails를 적어준다
+@Entity(name = "member")
+public class UserDto implements UserDetails {
 
-    //데이터를 관리하기 위한 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "userid", nullable = false, unique = true)
+    private Long userid;
 
     //아이디로 사용할 유저네임과 비밀번호
-    private String username;
-    private String password;
+    private String usernm;
+    private String userpw;
 
     // 사용자의 본명***
     private String name;  // 추가된 필드
+
+
+
+    @Builder(toBuilder = true)
+    private UserDto(Long userid, String userpw, String usernm) {
+        this.userid = userid;
+        this.userpw = userpw;
+        this.usernm = usernm;
+    }
+
+
+    public String getPassword() {
+        return this.userpw;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.usernm;
+    }
 
     //아까 model_constants에서 추가한 권한 정보를 담기위해서
     @ElementCollection(fetch = FetchType.EAGER) // 컬렉션 매핑을 위한 어노테이션
@@ -54,21 +76,22 @@ public class MemberEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true; // true로 수정
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true; // true로 수정
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true; // true로 수정
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true; // true로 수정
     }
+
 }

@@ -1,17 +1,22 @@
 package com.minjoo.StarlightWing.service;
 
+import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.model.Board;
 import com.minjoo.StarlightWing.persist.BoardRepository;
-import org.springframework.data.domain.Page;
+import org.h2.engine.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 //db를 활용한 대부분을 처리를 여기서 하게됨.
 @Service
 public class BoardService {
 
-//    @Autowired
+    //    @Autowired
     private final BoardRepository boardRepository;
 
     public BoardService(BoardRepository boardRepository){
@@ -20,11 +25,16 @@ public class BoardService {
 
     //게시글을 저장하는 writeBoard
     @Transactional
-    public void writeBoard(Board board, MemberEntity member){
+    public void writeBoard(Board board, UserDto usernm){
         //실제 저장시에 member에 해당하는 아이디만 저장하게 된다.
-        board.setMember(member);
-        boardRepository.save(board);
+        if (usernm == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
+        // 작성자 설정
+        board.setMember(usernm);
+        boardRepository.save(board); // 저장
     }
+
 
     //게시글리스트를 출력하는 getBoardList 메서드, 전체목록을 pageable객체로 반환하게함.
     //이때 findAll 메서드를 사용하는데, 이는 selectAll과같은 역할을 한다.

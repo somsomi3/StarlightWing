@@ -1,10 +1,12 @@
 package com.minjoo.StarlightWing.web;
+import com.minjoo.StarlightWing.dto.UserDto;
 
 import com.minjoo.StarlightWing.dto.ResponseDto;
 import com.minjoo.StarlightWing.model.Board;
 import com.minjoo.StarlightWing.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,18 +25,22 @@ public class BoardApiController {
 
     //Dto: 요청에 대한 응답을 반환할때 사용하는 클래스로 , 모든 컨트롤러에서 공통으로 사용된다.
 
-//    @PostMapping("/api/board")
+    //    @PostMapping("/api/board")
 //    public ResponseDto<Integer> save(@RequestBody Board board, @AuthenticationPrincipal MemberEntity member) {
 //        System.out.println("Board content: " + board.getContent()); // 디버깅
 //        boardService.writeBoard(board, member);
 //        return new ResponseDto<>(HttpStatus.OK, 1);
 //    }
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/board")
     public String saveBoard(
-        @RequestParam String title,
-        @RequestParam String content,
-        @RequestParam String category,
-        @AuthenticationPrincipal MemberEntity member) { // 현재 로그인한 사용자 정보를 가져옵니다.
+        @RequestParam(required = false, defaultValue = "제목 없음") String title,
+        @RequestParam(required = false, defaultValue = "내용 없음") String content,
+        @RequestParam(required = false, defaultValue = "기본 카테고리") String category,
+        @AuthenticationPrincipal UserDto member) { // 현재 로그인한 사용자 정보를 가져옵니다.
+        if (member == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        }
 
         // Board 객체를 생성하고 작성자 정보를 설정
         Board board = Board.builder()
@@ -44,7 +52,7 @@ public class BoardApiController {
         // boardService에 작성자 정보를 전달
         boardService.writeBoard(board, member);
 
-        return "redirect:/"; // 글 작성 후 메인 페이지로 리다이렉트
+        return "redirect:/index"; // 글 작성 후 메인 페이지로 리다이렉트
     }
 
 

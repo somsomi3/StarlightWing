@@ -23,7 +23,7 @@ public class UserServiceImpl extends UserService {
     }
 
     @Override
-    public String register(UserDto userDto) {
+    public void register(UserDto userDto) {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         userDto.setPassword(encodedPassword);
@@ -34,7 +34,6 @@ public class UserServiceImpl extends UserService {
         // JWT 토큰 생성
         String token = TokenUtils.generateJwt(userDto);
         String refreshToken = TokenUtils.generateRefreshToken(userDto);
-        return "AccessToken: " + token + ", RefreshToken: " + refreshToken;
     }
 
     @Override

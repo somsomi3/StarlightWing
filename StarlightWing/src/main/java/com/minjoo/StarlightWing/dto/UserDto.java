@@ -7,6 +7,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,12 +39,17 @@ public class UserDto implements UserDetails {
     private Long userid;
 
     //아이디로 사용할 유저네임과 비밀번호
+    @NotEmpty(message = "Username은 필수입니다.")
     private String username;
+    @NotEmpty(message = "Password는 필수입니다.")
+    @Size(min = 6, message = "Password는 최소 6자 이상이어야 합니다.")
     private String password;
 
     // 사용자의 본명***
-    private String name;  // 추가된 필드
-
+    private String name;
+    @NotEmpty(message = "Email은 필수입니다.")
+    @Email(message = "올바른 이메일 형식이어야 합니다.")
+    private String email;
 
 
     @Builder(toBuilder = true)

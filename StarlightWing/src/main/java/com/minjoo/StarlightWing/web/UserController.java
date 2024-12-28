@@ -3,6 +3,7 @@ package com.minjoo.StarlightWing.web;
 import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.service.UserService;
 import com.minjoo.StarlightWing.utils.TokenUtils;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> register(@Valid @RequestBody UserDto userDto) {
         userService.register(userDto);
         // 토큰 생성
         String token = TokenUtils.generateJwt(userDto);

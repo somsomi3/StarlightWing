@@ -59,6 +59,9 @@ dependencies {
 
 	//테스트용 타임리프
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// **Validation 의존성 추가**
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 tasks.named('test') {

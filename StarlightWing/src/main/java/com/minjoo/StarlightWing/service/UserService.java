@@ -29,6 +29,16 @@ public class UserService {
         if (!userDto.getEmail().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             throw new IllegalArgumentException("올바르지 않은 이메일 형식입니다.");
         }
+//        // DB에 저장할 User 엔티티 생성
+//        User user = User.builder()
+//            .username(userDto.getUsername())
+//            .password(userDto.getPassword()) // 여기서 비밀번호는 반드시 암호화해야 합니다.
+//            .email(userDto.getEmail())
+//            .build();
+
+        // DB에 저장
+        userRepository.save(userDto);
+
     };
 
     public Optional<UserDto> login(UserDto userDto) {

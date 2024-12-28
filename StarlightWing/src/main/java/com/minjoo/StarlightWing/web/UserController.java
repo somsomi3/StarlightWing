@@ -3,6 +3,8 @@ package com.minjoo.StarlightWing.web;
 import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.service.UserService;
 import com.minjoo.StarlightWing.utils.TokenUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -51,12 +53,12 @@ public class UserController {
         ));
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> login(@RequestBody UserDto userDto, HttpServletResponse response) {
         // 로그 확인
-        System.out.println("Received userId: " + userDto.getUsername());
-        System.out.println("Received userPw: " + userDto.getPassword());
+        System.out.println("Received username: " + userDto.getUsername());
+        System.out.println("Received password: " + userDto.getPassword());
         Optional<UserDto> isAuthenticated = userService.login(userDto);
 
         if (isAuthenticated.isPresent()) {
@@ -64,10 +66,19 @@ public class UserController {
             String token = TokenUtils.generateJwt(isAuthenticated.get());
             String refreshToken = TokenUtils.generateRefreshToken(isAuthenticated.get());
 
+            // Refresh Token을 httpOnly 쿠키에 저장
+            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+            refreshTokenCookie.setHttpOnly(true); // httpOnly 설정
+            refreshTokenCookie.setSecure(false); // HTTPS 환경에서는 true로 설정
+            refreshTokenCookie.setPath("/"); // 쿠키를 모든 경로에서 사용할 수 있도록 설정
+            refreshTokenCookie.setMaxAge(14 * 24 * 60 * 60); // 14일
+
+            response.addCookie(refreshTokenCookie);
+
+            // Access Token을 JSON 응답으로 전송
             return ResponseEntity.ok().body(Map.of(
                 "message", "로그인에 성공하였습니다.",
-                "token", token,
-                "refreshToken", refreshToken
+                "token", token
             ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(

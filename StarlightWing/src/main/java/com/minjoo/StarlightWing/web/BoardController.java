@@ -26,7 +26,7 @@ public class BoardController {
     private final BoardService boardService;
 
     //index 부분 에서는 게시글들의 목록을 출력해줘야함. 이때 model을 활용한다.
-    @GetMapping({"","/"})
+    @GetMapping({"/posts"})
     public String index(Model model,
         @PageableDefault(size = 3, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         //ui model에서 키와 벨류를 받아서 활용한다.

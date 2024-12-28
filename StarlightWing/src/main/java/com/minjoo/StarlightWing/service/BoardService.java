@@ -25,13 +25,13 @@ public class BoardService {
 
     //게시글을 저장하는 writeBoard
     @Transactional
-    public void writeBoard(Board board, UserDto usernm){
+    public void writeBoard(Board board, UserDto userId){
         //실제 저장시에 member에 해당하는 아이디만 저장하게 된다.
-        if (usernm == null) {
+        if (userId == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
         // 작성자 설정
-        board.setMember(usernm);
+        board.setAuth(userId);
         boardRepository.save(board); // 저장
     }
 

@@ -46,7 +46,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         "/api/v1/user/main",
 
         "/api/v1/user/login",
-        "/api/v1/user/logout",
+//        "/api/v1/user/logout",
 
         "/api/v1/token/token",
         "/user/login",
@@ -68,21 +68,30 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         try {
             String accessTokenHeader = request.getHeader(ACCESS_TOKEN_HEADER_KEY);
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN_HEADER_KEY);
-
+            if (StringUtils.isBlank(accessTokenHeader) && StringUtils.isBlank(refreshTokenHeader)) {
+                throw new Exception("토큰이 존재하지 않습니다.");
+            }
+// 디버깅 로그 추가
+            System.out.println("Access Token Header: " + accessTokenHeader);
+//            System.out.println("Refresh Token Header: " + refreshTokenHeader);
             if (StringUtils.isNotBlank(accessTokenHeader) || StringUtils.isNotBlank(refreshTokenHeader)) {
                 System.out.println("토큰이 존재");
 
                 String paramAccessToken = TokenUtils.getHeaderToToken(accessTokenHeader);
-                String paramRefreshToken = TokenUtils.getHeaderToToken(refreshTokenHeader);
+//                String paramRefreshToken = TokenUtils.getHeaderToToken(refreshTokenHeader);
+                System.out.println("Access Token Header: " + accessTokenHeader);
+//                System.out.println("Refresh Token Header: " + refreshTokenHeader);
 
                 // 블랙리스트에 있는 토큰일 경우, 거절
                 if (tokenBlackListService.isContainToken(paramAccessToken)) {
+                    System.out.println("토큰만료");
                     throw new Exception("만료된 토큰입니다!");
                 }
 
                 ValidTokenDto accTokenValidDto = TokenUtils.isValidToken(paramAccessToken);
+                System.out.println("Access Token Validation Result: " + accTokenValidDto.isValid());
                 if (accTokenValidDto.isValid()) {
-
+                    System.out.println("Access Token Validation Error: " + accTokenValidDto.getErrorName());
                     String userId = TokenUtils.getClaimsToUserId(paramAccessToken);
                     UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userId, null,
@@ -90,30 +99,35 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);  // 인증 정보를 SecurityContext에 설정
                     log.info("User authenticated with ID: {}", userId);
+                    System.out.println("User authenticated with ID: {}");
+
 
                     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
                     if (currentAuth != null) {
                         log.info("Authenticated user: {}", currentAuth.getName());
+                        System.out.println("Authenticated user: {}");
+
                     } else {
                         log.warn("No authentication found in SecurityContext");
+                        System.out.println("No authentication found in SecurityContext");
                     }
                     chain.doFilter(request, response);  // 접근을 허용
                 }
-                // 리프레시 토큰 생성
-                else {
-                    if (accTokenValidDto.getErrorName().equals("TOKEN_EXPIRED")) {
-                        if (TokenUtils.isValidToken(paramRefreshToken).isValid()) {
-                            UserDto claimsToUserDto = TokenUtils.getClaimsToUserDto(paramRefreshToken, false);
-                            String token = TokenUtils.generateJwt(claimsToUserDto);         // 새로운 접근 토큰을 발급
-                            sendToClientAccessToken(token, response);                       // 발급한 토큰을 클라이언트에게 전달
-                            chain.doFilter(request, response);
-                        } else {
-                            throw new Exception("다시 로그인이 필요");
-                        }
-                    } else {
-                        throw new Exception("토큰이 유효하지 않습니다.");
-                    }
-                }
+//                // 리프레시 토큰 생성
+//                else {
+//                    if (accTokenValidDto.getErrorName().equals("TOKEN_EXPIRED")) {
+//                        if (TokenUtils.isValidToken(paramRefreshToken).isValid()) {
+//                            UserDto claimsToUserDto = TokenUtils.getClaimsToUserDto(paramRefreshToken, false);
+//                            String token = TokenUtils.generateJwt(claimsToUserDto);         // 새로운 접근 토큰을 발급
+//                            sendToClientAccessToken(token, response);                       // 발급한 토큰을 클라이언트에게 전달
+//                            chain.doFilter(request, response);
+//                        } else {
+//                            throw new Exception("다시 로그인이 필요");
+//                        }
+//                    } else {
+//                        throw new Exception("토큰이 유효하지 않습니다.");
+//                    }
+//                }
             }
 
             else {

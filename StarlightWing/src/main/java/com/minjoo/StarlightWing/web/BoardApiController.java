@@ -4,8 +4,14 @@ import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.dto.ResponseDto;
 import com.minjoo.StarlightWing.model.Board;
 import com.minjoo.StarlightWing.service.BoardService;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,26 +42,44 @@ public class BoardApiController {
 //    }
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/api/board")
-    public String saveBoard(
+    public ResponseEntity<?> saveBoard(
         @RequestParam(required = false, defaultValue = "제목 없음") String title,
         @RequestParam(required = false, defaultValue = "내용 없음") String content,
         @RequestParam(required = false, defaultValue = "기본 카테고리") String category,
-        @AuthenticationPrincipal UserDto member) { // 현재 로그인한 사용자 정보를 가져옵니다.
+        @RequestParam(value = "image", required = false) MultipartFile image,
+        @AuthenticationPrincipal UserDto member) {
+
         if (member == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
 
-        // Board 객체를 생성하고 작성자 정보를 설정
+        // 이미지 파일 저장 로직 (예: 로컬 파일 시스템 또는 클라우드 저장소)
+        String imagePath = null;
+        if (image != null && !image.isEmpty()) {
+            try {
+                // 예시: 이미지를 로컬 디렉토리에 저장
+                String uploadDir = "/uploads/";
+                String filename = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
+                Path filepath = Paths.get(uploadDir, filename);
+                Files.copy(image.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
+                imagePath = filepath.toString();
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장 실패");
+            }
+        }
+
+        // Board 객체 생성
         Board board = Board.builder()
             .title(title)
             .content(content)
-            .category(category)
+//            .category(category)
+            .imagePath(imagePath)
             .build();
 
-        // boardService에 작성자 정보를 전달
+        // BoardService 호출
         boardService.writeBoard(board, member);
 
-        return "redirect:/index"; // 글 작성 후 메인 페이지로 리다이렉트
+        return ResponseEntity.ok().body(Map.of("message", "글이 성공적으로 작성되었습니다."));
     }
 
 

@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Builder
 @Getter
@@ -40,16 +41,19 @@ public class Board {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, length =20)
-    private String category;
+//    @Column(nullable = false, length =20)
+//    private String category;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
-    private UserDto member;
+    private UserDto auth;
 
     @CreationTimestamp
     private Timestamp creatDate;
 
+    @UpdateTimestamp
+    private Timestamp updateDate; // 수정 시간 필드 추가
 
+    private String imagePath; // 필드 추가
 }

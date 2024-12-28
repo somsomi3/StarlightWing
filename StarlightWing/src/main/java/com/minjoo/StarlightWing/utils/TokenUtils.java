@@ -59,7 +59,7 @@ public class TokenUtils {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userDto.getUserid());
         if (isAccessToken) {
-            claims.put("userNm", userDto.getUsernm());
+            claims.put("userNm", userDto.getUsername());
         }
         return claims;
     }
@@ -90,7 +90,7 @@ public class TokenUtils {
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())                                  // Header 구성
                 .claims(createClaims(userDto, true))        // Payload - Claims 구성
-                .subject(String.valueOf(userDto.getUsernm()))           // Payload - Subject 구성
+                .subject(String.valueOf(userDto.getUsername()))           // Payload - Subject 구성
                 .signWith(JWT_SECRET_KEY)                               // Signature 구성
                 .expiration(createExpiredDate(true));                       // Expired Date 구성
         return builder.compact();
@@ -101,7 +101,7 @@ public class TokenUtils {
         return Jwts.builder()
                 .setHeader(createHeader())
                 .claims(createClaims(userDto, false))
-                .subject(String.valueOf(userDto.getUsernm()))
+                .subject(String.valueOf(userDto.getUsername()))
                 .signWith(JWT_SECRET_KEY)
                 .expiration(createExpiredDate(false))
                 .compact();
@@ -144,7 +144,7 @@ public class TokenUtils {
         String userId = claims.get("userId").toString();
         if (isAccessToken) {
             String userNm = claims.get("userNm").toString();
-            return UserDto.builder().userid(Long.valueOf(userId)).usernm(userNm).build();
+            return UserDto.builder().userid(Long.valueOf(userId)).username(userNm).build();
         } else {
             return UserDto.builder().userid(Long.valueOf(userId)).build();
         }

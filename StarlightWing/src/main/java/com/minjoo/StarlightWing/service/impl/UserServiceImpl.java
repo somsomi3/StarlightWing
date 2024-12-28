@@ -25,8 +25,8 @@ public class UserServiceImpl extends UserService {
     @Override
     public String register(UserDto userDto) {
         // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(userDto.getUserpw());
-        userDto.setUserpw(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
 
 
         userRepository.save(userDto);
@@ -39,13 +39,13 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public Optional<UserDto> login(UserDto userDto) {
-        Optional<UserDto> user = userRepository.findByUsernm(userDto.getUsernm());
+        Optional<UserDto> user = userRepository.findByUsername(userDto.getUsername());
 
         if (user.isEmpty()) {
             return Optional.empty();
         }
 
-        if (!passwordEncoder.matches(userDto.getUserpw(), user.get().getUserpw())) {
+        if (!passwordEncoder.matches(userDto.getPassword(), user.get().getPassword())) {
             return Optional.empty();
         }
 

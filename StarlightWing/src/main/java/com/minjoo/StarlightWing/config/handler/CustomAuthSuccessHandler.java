@@ -35,7 +35,7 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
         responseMap.put("userInfo", userDto);
 
 
-        if ("D".equals(userDto.getUsernm())) {
+        if ("D".equals(userDto.getUsername())) {
             responseMap.put("resultCode", 9001);
             responseMap.put("token", null);
             responseMap.put("failMsg", "휴면 계정입니다.");

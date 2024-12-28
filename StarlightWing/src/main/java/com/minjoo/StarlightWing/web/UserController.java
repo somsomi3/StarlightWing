@@ -54,8 +54,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody UserDto userDto) {
         // 로그 확인
-        System.out.println("Received userId: " + userDto.getUserid());
-        System.out.println("Received userPw: " + userDto.getUserpw());
+        System.out.println("Received userId: " + userDto.getUsername());
+        System.out.println("Received userPw: " + userDto.getPassword());
         Optional<UserDto> isAuthenticated = userService.login(userDto);
 
         if (isAuthenticated.isPresent()) {

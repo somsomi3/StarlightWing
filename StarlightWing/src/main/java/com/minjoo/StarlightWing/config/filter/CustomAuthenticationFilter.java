@@ -42,10 +42,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
             UserDto user = objectMapper.readValue(request.getInputStream(), UserDto.class);
-            log.debug("1.CustomAuthenticationFilter :: userId:" + user.getUserid() + " userPw:" + user.getUserpw());
+            log.debug("1.CustomAuthenticationFilter :: userId:" + user.getUserid() + " userPw:" + user.getPassword());
 
             // 토큰 발급
-            return new UsernamePasswordAuthenticationToken(user.getUserid(), user.getUserpw());
+            return new UsernamePasswordAuthenticationToken(user.getUserid(), user.getPassword());
         } catch (UsernameNotFoundException ae) {
             throw new UsernameNotFoundException(ae.getMessage());
         }

@@ -36,8 +36,8 @@ public class UserDto implements UserDetails {
     private Long userid;
 
     //아이디로 사용할 유저네임과 비밀번호
-    private String usernm;
-    private String userpw;
+    private String username;
+    private String password;
 
     // 사용자의 본명***
     private String name;  // 추가된 필드
@@ -45,20 +45,16 @@ public class UserDto implements UserDetails {
 
 
     @Builder(toBuilder = true)
-    private UserDto(Long userid, String userpw, String usernm) {
+    private UserDto(Long userid, String username, String password) {
         this.userid = userid;
-        this.userpw = userpw;
-        this.usernm = usernm;
+        this.password = password;
+        this.username = username;
     }
 
-
-    public String getPassword() {
-        return this.userpw;
-    }
 
     @Override
     public String getUsername() {
-        return this.usernm;
+        return this.username;
     }
 
     //아까 model_constants에서 추가한 권한 정보를 담기위해서

@@ -37,8 +37,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDto userDto = (UserDto) userDetailsService.loadUserByUsername(userId);
 
         // 비밀번호 일치여부 판단
-        if (!passwordEncoder.matches(userPw, userDto.getUserpw())) {
-            throw new BadCredentialsException(userDto.getUsernm() + " Invalid password");
+        if (!passwordEncoder.matches(userPw, userDto.getPassword())) {
+            throw new BadCredentialsException(userDto.getUsername() + " Invalid password");
         }
 
         // 인증 성공

@@ -17,7 +17,7 @@ public abstract class UserService {
 
     public abstract String register(UserDto userDto);
     public Optional<UserDto> login(UserDto userDto) {
-        return userRepository.findByUsernm(userDto.getUsernm());
+        return userRepository.findByUsername(userDto.getUsername());
     }
 
     public abstract List<UserDto> selectUserList(UserDto userDto);

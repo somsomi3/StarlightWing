@@ -1,0 +1,58 @@
+package com.minjoo.StarlightWing.service.impl;
+
+import com.minjoo.StarlightWing.dto.UserDto;
+import com.minjoo.StarlightWing.persist.UserRepository;
+import com.minjoo.StarlightWing.service.UserService;
+import com.minjoo.StarlightWing.utils.TokenUtils;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl extends UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public void register(UserDto userDto) {
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
+
+
+        userRepository.save(userDto);
+
+        // JWT 토큰 생성
+        String token = TokenUtils.generateJwt(userDto);
+        String refreshToken = TokenUtils.generateRefreshToken(userDto);
+    }
+
+    @Override
+    public Optional<UserDto> login(UserDto userDto) {
+        Optional<UserDto> user = userRepository.findByUsername(userDto.getUsername());
+
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (!passwordEncoder.matches(userDto.getPassword(), user.get().getPassword())) {
+            return Optional.empty();
+        }
+
+        return user;  // 로그인 성공
+    }
+
+    @Override
+    public List<UserDto> selectUserList(UserDto userDto) {
+        return userRepository.findAll();  // 모든 사용자 목록 조회
+    }
+}

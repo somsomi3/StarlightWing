@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'war'
 	id 'org.springframework.boot' version '3.4.0'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.minjoo'
@@ -28,18 +28,40 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//	implementation 'org.springframework.boot:spring-boot-starter-log4j2'
 	compileOnly 'org.projectlombok:lombok'
 
 	runtimeOnly 'com.h2database:h2'
-	implementation group: 'com.h2database', name: 'h2', version: '1.4.200' //h2인메모리 데이터베이스를 사용하기 위해 이 줄을 작성.
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.7.2'//스크래핑을 하기 위해 jsoup라이브러리도 추가를 해줌.
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation group: 'com.h2database', name: 'h2', version: '2.2.220' //h2인메모리 데이터베이스를 사용하기 위해 이 줄을 작성.
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.15.3'//스크래핑을 하기 위해 jsoup라이브러리도 추가를 해줌.
+
+	//최신버전
+	implementation 'io.jsonwebtoken:jjwt:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6' // JSON 처리를 위한 Jackson 사용
+//	implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
+
+	//구버전
+//	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+//	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+//	implementation 'com.sun.xml.bind:jaxb-impl:2.3.1'
 
 	annotationProcessor 'org.projectlombok:lombok'
 //	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+	implementation 'org.postgresql:postgresql:42.7.2'
+
+	//테스트용 타임리프
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	// **Validation 의존성 추가**
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 }
 
 tasks.named('test') {

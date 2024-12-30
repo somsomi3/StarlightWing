@@ -48,4 +48,7 @@ public class UserService {
     public List<UserDto> selectUserList(UserDto userDto) {
         return null;
     }
+
+//    public UserDto loadUserById(Long userid) {
+//    }
 }

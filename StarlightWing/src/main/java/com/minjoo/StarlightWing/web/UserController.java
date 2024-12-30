@@ -1,8 +1,12 @@
 package com.minjoo.StarlightWing.web;
 
 import com.minjoo.StarlightWing.dto.UserDto;
+import com.minjoo.StarlightWing.dto.ValidTokenDto;
 import com.minjoo.StarlightWing.service.UserService;
 import com.minjoo.StarlightWing.utils.TokenUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -11,9 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +38,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
 
     @PostMapping("/user")
     public ResponseEntity<Object> selectUser(@RequestBody UserDto userDto) {
@@ -134,4 +141,64 @@ public class UserController {
     public String home() {
         return "index";  // "/" 경로로 접근해도 index.html로 이동
     }
+
+
+    @Autowired
+    private TokenUtils tokenUtils; // JWT 생성 및 검증 로직
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+        // 리프레시 토큰 null 검증
+        if (refreshToken == null) {
+//            System.out.println("리프레시 토큰이 제공되지 않았습니다."); // 디버깅 로그
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 제공되지 않았습니다."));
+//        }
+//        System.out.println("리프레시 토큰: " + refreshToken); // 디버깅 로그
+            // 리프레시 토큰이 없는 경우 메인 페이지로 리다이렉트
+            System.out.println("리프레시 토큰이 제공되지 않았습니다.");
+            return ResponseEntity.status(HttpStatus.FOUND) // 302 Redirect
+                .header("Location", "/") // 메인 페이지로 리다이렉트
+                .build();
+        }
+
+        try {
+            // 리프레시 토큰 검증 및 사용자 정보 추출
+            Claims claims = TokenUtils.getTokenToClaims(refreshToken);
+            // Claims 객체 전체 출력
+            System.out.println("Claims 전체: " + claims);
+
+            // userId와 userNm 필드 출력
+            System.out.println("userId: " + claims.get("userId"));
+            System.out.println("userNm: " + claims.get("userNm"));
+
+            if (claims == null || claims.get("userId") == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 유효하지 않습니다."));
+            }
+
+            // 사용자 정보 추출
+            String userId = claims.get("userId").toString();
+            String username = claims.get("userNm") != null ? claims.get("userNm").toString() : null;
+
+            // 사용자 객체 생성
+            UserDto userDto = UserDto.builder()
+                .userid(Long.parseLong(userId))
+                .username(username)
+                .build();
+
+            // 새로운 액세스 토큰 발급
+            String newAccessToken = TokenUtils.generateJwt(userDto);
+
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 만료되었습니다."));
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 유효하지 않습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "토큰 검증 중 오류가 발생했습니다."));
+        }
+    }
+
+
 }

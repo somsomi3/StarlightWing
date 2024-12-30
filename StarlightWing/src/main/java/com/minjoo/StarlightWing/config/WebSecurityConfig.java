@@ -53,7 +53,7 @@ public class WebSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("api/v1/user/index", "api/v1/user/index.html", "/static/**", "/login.js").permitAll()
-                .requestMatchers("api/v1/user/login", "api/v1/user/register").permitAll()
+                .requestMatchers("api/v1/user/login", "api/v1/user/register", "/api/v1/user/refresh","/api/v1/posts").permitAll()
                 .requestMatchers("/api/v1/user/main").authenticated()  // 인증된 사용자만 접근 가능
                 .anyRequest().authenticated())  // 나머지 요청은 인증 필요
             .addFilterBefore(jwtAuthorizationFilter(), BasicAuthenticationFilter.class)

@@ -2,6 +2,7 @@ package com.minjoo.StarlightWing.service.impl;
 
 import com.minjoo.StarlightWing.service.TokenBlackListService;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenBlackListServiceImpl implements TokenBlackListService {
 
+    //Redis기반의 블랙리스트: 레디스를 데이터 저장소로 사용(빠른성능, 영속성, 데이터TTL)
     private final RedisTemplate<String, Object> redisTemplate;
 
     private final String REDIS_BLACK_LIST_KEY = "tokenBlackList";
@@ -36,5 +38,10 @@ public class TokenBlackListServiceImpl implements TokenBlackListService {
     @Override
     public void removeToken(String value) {
         redisTemplate.opsForList().remove(REDIS_BLACK_LIST_KEY, 0, value);
+    }
+
+    //토큰 TTL 추가
+    public void addTokenToList(String value, long ttlInSeconds) {
+        redisTemplate.opsForValue().set(value, "blacklisted", ttlInSeconds, TimeUnit.SECONDS);
     }
 }

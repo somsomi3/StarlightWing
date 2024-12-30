@@ -2,10 +2,12 @@ package com.minjoo.StarlightWing.web;
 
 //jsp파일들을 return해주는 BoardController
 
+import com.minjoo.StarlightWing.dto.BoardDto;
 import com.minjoo.StarlightWing.model.Board;
 import com.minjoo.StarlightWing.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -26,12 +28,13 @@ public class BoardController {
     private final BoardService boardService;
 
     //index 부분 에서는 게시글들의 목록을 출력해줘야함. 이때 model을 활용한다.
-    @GetMapping({"/posts"})
-    public String index(Model model,
+    @GetMapping("/api/posts")
+    public ResponseEntity<?> getPosts(
         @PageableDefault(size = 3, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        //ui model에서 키와 벨류를 받아서 활용한다.
-        model.addAttribute("board", boardService.getBoardList(pageable));
-        return "login";
+        System.out.println(">>> 컨트롤러: getBoardList 호출 전");
+        Page<BoardDto> boardDtos = boardService.getBoardList(pageable)
+            .map(board -> new BoardDto(board.getId(), board.getTitle(), board.getContent(), board.getAuth(), board.getCreatedDate(), board.getUpdatedDate()));
+        return ResponseEntity.ok(boardDtos);
     }
 
     @GetMapping("/board/saveForm")

@@ -120,9 +120,9 @@ public class TokenUtils {
     public static String getHeaderToToken(String header) {
         return header.split(" ")[1];
     }
-    
 
-    private static Claims getTokenToClaims(String token) {
+
+    public static Claims getTokenToClaims(String token) {
         System.out.println("확인1  : " + token);
         System.out.println("확인2  : " + JWT_SECRET_KEY);
         return Jwts.parser()

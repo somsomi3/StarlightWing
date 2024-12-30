@@ -47,11 +47,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         "/api/v1/user/login",
 //        "/api/v1/user/logout",
-
+        "/api/v1/user/refresh", // /refresh를 화이트리스트에 추가
         "/api/v1/token/token",
         "/user/login",
         "/token/token",
-        "/api/v1/user/register"  // 회원가입 요청 추가
+        "/api/v1/user/register",  // 회원가입 요청 추가
+        "/api/post/"
     );
 
     @Override
@@ -93,8 +94,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 if (accTokenValidDto.isValid()) {
                     System.out.println("Access Token Validation Error: " + accTokenValidDto.getErrorName());
                     String userId = TokenUtils.getClaimsToUserId(paramAccessToken);
+                    // UserDto 생성 및 SecurityContext 설정
+                    UserDto userDto = new UserDto();
+                    userDto.setUserid(Long.valueOf(userId)); // 필요한 사용자 정보를 설정
                     UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userId, null,
+                        new UsernamePasswordAuthenticationToken(userDto, null,
                             Collections.singletonList(new SimpleGrantedAuthority("USER")));
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);  // 인증 정보를 SecurityContext에 설정
@@ -104,6 +108,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                     Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
                     if (currentAuth != null) {
+                        log.info("Authentication class: {}", currentAuth.getClass());
+                        log.info("Principal: {}", currentAuth.getPrincipal());
                         log.info("Authenticated user: {}", currentAuth.getName());
                         System.out.println("Authenticated user: {}");
 

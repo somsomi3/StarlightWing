@@ -1,9 +1,11 @@
 package com.minjoo.StarlightWing.service;
 
+import com.minjoo.StarlightWing.dto.BoardDto;
 import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.model.Board;
 import com.minjoo.StarlightWing.persist.BoardRepository;
 import org.h2.engine.User;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
@@ -38,8 +40,17 @@ public class BoardService {
 
     //게시글리스트를 출력하는 getBoardList 메서드, 전체목록을 pageable객체로 반환하게함.
     //이때 findAll 메서드를 사용하는데, 이는 selectAll과같은 역할을 한다.
-    public Page<Board> getBoardList(Pageable pageable) {
-        return boardRepository.findAll(pageable);
+    public Page<BoardDto> getBoardList(Pageable pageable) {
+        return boardRepository.findAll(pageable).map(board ->
+            new BoardDto(
+                board.getId(),
+                board.getTitle(),
+                board.getContent(),
+                board.getAuth() != null ? board.getAuth().getUsername() : null,
+                board.getCreatDate(),
+                board.getUpdateDate()
+            )
+        );
     }
 
     // 특정 게시글을 출력하는 getBoard(읽기만가능하게= readOnly)

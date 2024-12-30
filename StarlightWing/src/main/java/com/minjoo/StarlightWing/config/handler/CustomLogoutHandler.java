@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.minjoo.StarlightWing.dto.ValidTokenDto;
 import com.minjoo.StarlightWing.service.TokenBlackListService;
 import com.minjoo.StarlightWing.utils.TokenUtils;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -51,8 +52,8 @@ public class CustomLogoutHandler implements LogoutHandler {
             String token = TokenUtils.getHeaderToToken(headerToken);
             log.debug("[+] 추출된 토큰: " + token);
 
-            ValidTokenDto validTokenDto = TokenUtils.isValidToken(token);
-            if (validTokenDto.isValid()) {
+            boolean validTokenDto = TokenUtils.isValidToken(token).isValid();
+            if (validTokenDto) {
 
                 if (!tokenBlackListService.isContainToken(token)) {
                     tokenBlackListService.addTokenToList(token);
@@ -86,5 +87,14 @@ public class CustomLogoutHandler implements LogoutHandler {
             resultMap.put("failMsg", "로그아웃 과정에서 문제가 발생.");
             sendErrorResponse(response, resultMap);
         }
+        // Refresh Token 쿠키 삭제
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true); // HTTPS 환경에서만 사용
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0); // 즉시 만료
+        response.addCookie(refreshTokenCookie);
+
+        log.info("[+] Refresh Token이 삭제되었습니다.");
     }
 }

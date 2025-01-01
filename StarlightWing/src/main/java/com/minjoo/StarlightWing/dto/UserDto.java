@@ -59,6 +59,12 @@ public class UserDto implements UserDetails {
         this.username = username;
     }
 
+    public UserDto(UserDto auth) {
+    }
+
+    public UserDto(String auth) {
+    }
+
 
     @Override
     public String getUsername() {

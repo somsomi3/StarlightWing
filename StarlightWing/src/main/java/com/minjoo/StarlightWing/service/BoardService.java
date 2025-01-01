@@ -46,9 +46,9 @@ public class BoardService {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getAuth() != null ? board.getAuth().getUsername() : null,
-                board.getCreatDate(),
-                board.getUpdateDate()
+                board.getAuth(),
+                board.getCreatedDate(),
+                board.getUpdatedDate()
             )
         );
     }

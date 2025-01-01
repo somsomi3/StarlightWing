@@ -50,10 +50,10 @@ public class Board {
     private UserDto auth;
 
     @CreationTimestamp
-    private Timestamp creatDate;
+    private Timestamp createdDate;
 
     @UpdateTimestamp
-    private Timestamp updateDate; // 수정 시간 필드 추가
+    private Timestamp updatedDate; // 수정 시간 필드 추가
 
     private String imagePath; // 필드 추가
 

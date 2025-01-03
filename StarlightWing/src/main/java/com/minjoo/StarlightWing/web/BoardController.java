@@ -41,7 +41,8 @@ public class BoardController {
                 board.getContent(),
                 board.getAuthor() != null ? board.getAuthor() : "익명", // 작성자 이름
                 board.getCreatedAt(),
-                board.getUpdatedAt()
+                board.getUpdatedAt(),
+                board.getImage()
             ));
 
         return ResponseEntity.ok(boardDtos);

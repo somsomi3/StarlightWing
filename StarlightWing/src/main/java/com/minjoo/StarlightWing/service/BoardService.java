@@ -48,7 +48,8 @@ public class BoardService {
                 board.getContent(),
                 board.getAuthor(),
                 board.getCreatedAt(),
-                board.getUpdatedAt()
+                board.getUpdatedAt(),
+                board.getImage()
             )
         );
     }
@@ -74,8 +75,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Failed to load post : cannot find post id")); //영속화
         board.setTitle(requestBoard.getTitle());
         board.setContent(requestBoard.getContent());
-        // 카테고리 업데이트
-        //board.setCategory(requestBoard.getCategory());
+        board.setImage(requestBoard.getImage());
 
     }
 }

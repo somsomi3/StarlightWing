@@ -55,7 +55,7 @@ public class Board {
     @UpdateTimestamp
     private Timestamp updatedAt; // 수정 시간 필드 추가
 
-    private String imagePath; // 필드 추가
+    private String image; // 필드 추가
 
 //    public Object getSomeLazyField() {
 //    }

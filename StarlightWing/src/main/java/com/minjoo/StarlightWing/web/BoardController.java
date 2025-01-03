@@ -39,9 +39,9 @@ public class BoardController {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getAuth() != null ? board.getAuth() : "익명", // 작성자 이름
-                board.getCreatedDate(),
-                board.getUpdatedDate()
+                board.getAuthor() != null ? board.getAuthor() : "익명", // 작성자 이름
+                board.getCreatedAt(),
+                board.getUpdatedAt()
             ));
 
         return ResponseEntity.ok(boardDtos);

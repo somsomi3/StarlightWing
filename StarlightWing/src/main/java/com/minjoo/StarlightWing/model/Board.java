@@ -47,13 +47,13 @@ public class Board {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
-    private UserDto auth;
+    private UserDto author;
 
     @CreationTimestamp
-    private Timestamp createdDate;
+    private Timestamp createdAt;
 
     @UpdateTimestamp
-    private Timestamp updatedDate; // 수정 시간 필드 추가
+    private Timestamp updatedAt; // 수정 시간 필드 추가
 
     private String imagePath; // 필드 추가
 

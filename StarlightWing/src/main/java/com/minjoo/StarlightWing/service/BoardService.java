@@ -33,7 +33,7 @@ public class BoardService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
         // 작성자 설정
-        board.setAuth(userId);
+        board.setAuthor(userId);
         boardRepository.save(board); // 저장
     }
 
@@ -46,9 +46,9 @@ public class BoardService {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getAuth(),
-                board.getCreatedDate(),
-                board.getUpdatedDate()
+                board.getAuthor(),
+                board.getCreatedAt(),
+                board.getUpdatedAt()
             )
         );
     }

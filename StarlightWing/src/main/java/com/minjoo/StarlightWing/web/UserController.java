@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,7 +171,7 @@ public class UserController {
 
             // userId와 userNm 필드 출력
             System.out.println("userId: " + claims.get("userId"));
-            System.out.println("userNm: " + claims.get("userNm"));
+            System.out.println("userNm: " + claims.get("sub"));
 
             if (claims == null || claims.get("userId") == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 유효하지 않습니다."));
@@ -178,8 +179,9 @@ public class UserController {
 
             // 사용자 정보 추출
             String userId = claims.get("userId").toString();
-            String username = claims.get("userNm") != null ? claims.get("userNm").toString() : null;
-
+            String username = claims.get("sub") != null ? claims.get("sub").toString() : null;
+            System.out.println("userId: " + claims.get("userId"));
+            System.out.println("username: " + claims.get("sub"));
             // 사용자 객체 생성
             UserDto userDto = UserDto.builder()
                 .userid(Long.parseLong(userId))
@@ -189,7 +191,8 @@ public class UserController {
             // 새로운 액세스 토큰 발급
             String newAccessToken = TokenUtils.generateJwt(userDto);
 
-            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken,
+                "username", Objects.requireNonNull(username)));
 
         } catch (ExpiredJwtException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "리프레시 토큰이 만료되었습니다."));

@@ -33,7 +33,7 @@ public class BoardService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
         }
         // 작성자 설정
-        board.setAuth(userId);
+        board.setAuthor(userId);
         boardRepository.save(board); // 저장
     }
 
@@ -46,9 +46,10 @@ public class BoardService {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
-                board.getAuth() != null ? board.getAuth().getUsername() : null,
-                board.getCreatDate(),
-                board.getUpdateDate()
+                board.getAuthor(),
+                board.getCreatedAt(),
+                board.getUpdatedAt(),
+                board.getImage()
             )
         );
     }
@@ -74,8 +75,7 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Failed to load post : cannot find post id")); //영속화
         board.setTitle(requestBoard.getTitle());
         board.setContent(requestBoard.getContent());
-        // 카테고리 업데이트
-        //board.setCategory(requestBoard.getCategory());
+        board.setImage(requestBoard.getImage());
 
     }
 }

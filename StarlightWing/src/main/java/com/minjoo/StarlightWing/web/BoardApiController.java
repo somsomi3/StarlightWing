@@ -45,7 +45,6 @@ public class BoardApiController {
     public ResponseEntity<?> saveBoard(
         @RequestParam(required = false, defaultValue = "제목 없음") String title,
         @RequestParam(required = false, defaultValue = "내용 없음") String content,
-        @RequestParam(required = false, defaultValue = "기본 카테고리") String category,
         @RequestParam(value = "image", required = false) MultipartFile image,
         @AuthenticationPrincipal UserDto member) {
 
@@ -54,7 +53,7 @@ public class BoardApiController {
         }
 
         // 이미지 파일 저장 로직 (예: 로컬 파일 시스템 또는 클라우드 저장소)
-        String imagePath = null;
+        String imageUrl = null;
         if (image != null && !image.isEmpty()) {
             try {
                 // 예시: 이미지를 로컬 디렉토리에 저장
@@ -62,7 +61,7 @@ public class BoardApiController {
                 String filename = UUID.randomUUID().toString() + "_" + image.getOriginalFilename();
                 Path filepath = Paths.get(uploadDir, filename);
                 Files.copy(image.getInputStream(), filepath, StandardCopyOption.REPLACE_EXISTING);
-                imagePath = filepath.toString();
+                imageUrl = filepath.toString();
             } catch (IOException e) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장 실패");
             }
@@ -72,8 +71,7 @@ public class BoardApiController {
         Board board = Board.builder()
             .title(title)
             .content(content)
-//            .category(category)
-            .imagePath(imagePath)
+            .image(imageUrl)
             .build();
 
         // BoardService 호출

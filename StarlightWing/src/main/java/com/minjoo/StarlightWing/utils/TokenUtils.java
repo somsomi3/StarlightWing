@@ -1,6 +1,8 @@
 package com.minjoo.StarlightWing.utils;
 
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 import com.minjoo.StarlightWing.dto.UserDto;
 import com.minjoo.StarlightWing.dto.ValidTokenDto;
 import io.jsonwebtoken.Claims;
@@ -10,11 +12,13 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -149,5 +153,19 @@ public class TokenUtils {
             return UserDto.builder().userid(Long.valueOf(userId)).build();
         }
     }
+
+    // JWT에서 sub(사용자 이름) 추출
+//    public static String extractUsernameFromToken(String token) {
+//        Key key = new SecretKeySpec(JWT_SECRET_KEY.getEncoded(), "HmacSHA256"); // SecretKey 생성
+//
+//        Claims claims = Jwts.parserBuilder()
+//            .setSigningKey(key) // verifyWith로 대체됨
+//            .build()
+//            .parseClaimsJws(token)
+//            .getBody();
+//
+//        return claims.getSubject(); // sub 값 반환
+//    }
+
 }
 

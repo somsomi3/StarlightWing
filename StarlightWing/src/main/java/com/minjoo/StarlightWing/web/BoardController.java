@@ -32,8 +32,19 @@ public class BoardController {
     public ResponseEntity<?> getPosts(
         @PageableDefault(size = 3, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         System.out.println(">>> 컨트롤러: getBoardList 호출 전");
+
+        // Board 엔티티에서 BoardDto로 매핑
         Page<BoardDto> boardDtos = boardService.getBoardList(pageable)
-            .map(board -> new BoardDto(board.getId(), board.getTitle(), board.getContent(), board.getAuth(), board.getCreatedDate(), board.getUpdatedDate()));
+            .map(board -> new BoardDto(
+                board.getId(),
+                board.getTitle(),
+                board.getContent(),
+                board.getAuthor() != null ? board.getAuthor() : "익명", // 작성자 이름
+                board.getCreatedAt(),
+                board.getUpdatedAt(),
+                board.getImage()
+            ));
+
         return ResponseEntity.ok(boardDtos);
     }
 

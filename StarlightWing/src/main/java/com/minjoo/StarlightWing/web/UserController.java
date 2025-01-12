@@ -53,7 +53,7 @@ public class UserController {
         // 토큰 생성
         String token = TokenUtils.generateJwt(userDto);
         String refreshToken = TokenUtils.generateRefreshToken(userDto);
-
+        log.info("Register endpoint called with data: {}", userDto); // 로그 출력
         return ResponseEntity.ok().body(Map.of(
             "message", "회원가입이 성공적으로 처리되었습니다.",
             "token", token,

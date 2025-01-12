@@ -1,9 +1,9 @@
 package com.minjoo.StarlightWing.config.handler;
 
 import com.minjoo.StarlightWing.dto.UserDto;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,10 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-//    @Autowired
+    @Autowired
     private UserDetailsService userDetailsService;
 
-    @NonNull
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override

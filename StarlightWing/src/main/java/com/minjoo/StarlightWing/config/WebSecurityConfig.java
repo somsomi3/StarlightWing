@@ -52,7 +52,10 @@ public class WebSecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)  // CSRF 보호 비활성화
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("api/v1/user/index", "api/v1/user/index.html", "/static/**", "/login.js").permitAll()
+                .requestMatchers(
+                    "/api",                // /api 경로 추가
+                    "/api/**",             // /api/** 경로 추가
+                    "api/v1/user/index", "api/v1/user/index.html", "/static/**", "/login.js").permitAll()
                 .requestMatchers("api/v1/user/login", "api/v1/user/register", "/api/v1/user/refresh","/api/v1/posts").permitAll()
                 .requestMatchers("/api/v1/user/main").authenticated()  // 인증된 사용자만 접근 가능
                 .anyRequest().authenticated())  // 나머지 요청은 인증 필요
@@ -77,7 +80,7 @@ public class WebSecurityConfig {
 
     @Bean
     public CustomAuthenticationProvider customAuthenticationProvider() {
-        return new CustomAuthenticationProvider(passwordEncoder());
+        return new CustomAuthenticationProvider();
     }
 
 
@@ -113,7 +116,13 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         System.out.println("CORS 설정 적용");
-        configuration.setAllowedOrigins(List.of("http://localhost:8080/index", "http://localhost:8000", "http://localhost:3000", "http://localhost:63342"));
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:8080/index",
+            "http://localhost:8000",
+            "http://localhost:3000",
+            "http://localhost:63342",
+            "http://3.36.30.27:8080" // 추가된 IP
+            ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "x-refresh-token", "Content-Type"));
         configuration.setAllowCredentials(true);

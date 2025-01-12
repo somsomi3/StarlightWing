@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ComponentScan
 @Service
@@ -14,6 +15,8 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public void register(UserDto userDto) {
         if (userDto.getUsername() == null || userDto.getUsername().isEmpty()) {
@@ -35,6 +38,18 @@ public class UserService {
 //            .password(userDto.getPassword()) // 여기서 비밀번호는 반드시 암호화해야 합니다.
 //            .email(userDto.getEmail())
 //            .build();
+        // 중복 확인
+        if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 사용자명입니다.");
+        }
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+        }
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        userDto.setPassword(encodedPassword);
+
 
         // DB에 저장
         userRepository.save(userDto);

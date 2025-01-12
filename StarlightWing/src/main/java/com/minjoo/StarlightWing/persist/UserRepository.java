@@ -1,6 +1,8 @@
 package com.minjoo.StarlightWing.persist;
 
 import com.minjoo.StarlightWing.dto.UserDto;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +14,7 @@ public interface UserRepository extends JpaRepository<UserDto, Long> {
 //    Optional<UserDto> findByUsername(String userNm);
 
     Optional<UserDto> findByUsername(String username);
-
+    Optional<Object> findByEmail(@NotEmpty(message = "Email은 필수입니다.") @Email(message = "올바른 이메일 형식이어야 합니다.") String email);
 
     //회원가입시에 이미 존재하는 아이디인지 확인하기 위한 메서드
     boolean existsByUserid(Long userid);

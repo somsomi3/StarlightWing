@@ -52,8 +52,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         "/user/login",
         "/token/token",
         "/api/v1/user/register",  // 회원가입 요청 추가
-        "/api/post/"
-    );
+        "/api/post/",
+
+        "/api",
+        "/api/**"
+        );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
